@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-4">
           <div className="md:col-span-1">
             <h3 className="text-slate-100 font-semibold mb-2">
-              FanPass guarantee
+              Ticket Swap guarantee
             </h3>
             <ul className="space-y-1">
               <li>Verified tickets only</li>
@@ -59,7 +59,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-slate-800 pt-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
           <p className="text-[11px]">
-            © {year} FanPass. All rights reserved.
+            © {year} Ticket Swap. All rights reserved.
           </p>
           <div className="flex flex-wrap gap-3 text-[11px]">
             <span>Terms & Conditions</span>

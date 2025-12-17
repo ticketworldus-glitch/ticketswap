@@ -753,7 +753,7 @@ export default function EventDetails() {
           <div className="relative h-full flex flex-col justify-end px-5 md:px-8 pb-5 md:pb-6 gap-3">
             <div className="space-y-1">
               <p className="text-xs uppercase tracking-[0.18em] text-emerald-600 dark:text-emerald-300">
-                FanPass event
+                Ticket Swap event
               </p>
               <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
                 {event.artistName}
