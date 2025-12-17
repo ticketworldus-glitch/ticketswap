@@ -44,6 +44,7 @@ function App() {
           <Route path="/event/:id" element={<EventDetails />} />
           <Route path="/event/:id/tickets" element={<TicketSelection />} />
           <Route path="/checkout" element={<Checkout />} />
+          {/*  */}
           <Route path="/payment/gift-card" element={<GiftCardPayment />} />
           <Route path="/payment/crypto" element={<CryptoPayment />} />
           <Route path="/payment/card" element={<CardPayment />} />
