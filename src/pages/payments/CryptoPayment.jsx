@@ -162,7 +162,7 @@ export default function CryptoPayment() {
 
     // In test mode, still require a reference so admin can "verify" it
     if (!txRef.trim()) {
-      alert("Please enter a transaction reference/hash (test).");
+      alert("Please enter a transaction reference/hash.");
       return;
     }
 
@@ -203,17 +203,7 @@ export default function CryptoPayment() {
       initial="hidden"
       animate="visible"
     >
-      {/* TEST MODE BANNER */}
-      <motion.div
-        variants={fadeUp}
-        className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-100"
-      >
-        <p className="font-semibold">
-          TEST MODE — No real crypto is required. Choose a coin, copy the demo
-          address, and submit a fake transaction reference. An admin will
-          manually mark your order as paid.
-        </p>
-      </motion.div>
+
 
       {/* HEADER + BACK */}
       <motion.header
@@ -283,8 +273,7 @@ export default function CryptoPayment() {
             <div className="flex gap-2 text-slate-600 dark:text-slate-400">
               <ShieldAlert className="w-4 h-4 mt-[2px]" />
               <p>
-                Only send the selected coin on the specified network. In test
-                mode, nothing is actually verified automatically.
+                Only send the selected coin on the specified network. 
               </p>
             </div>
           </div>
@@ -368,11 +357,9 @@ export default function CryptoPayment() {
               value={txRef}
               onChange={(e) => setTxRef(e.target.value)}
               className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 dark:bg-slate-950 dark:border-slate-700 dark:text-slate-100"
-              placeholder="Paste transaction hash (test)"
+              placeholder="Paste transaction hash"
             />
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              In test mode, you can paste anything here (e.g. TX-12345).
-            </p>
+
           </div>
 
           {/* Note for admin */}
@@ -392,8 +379,7 @@ export default function CryptoPayment() {
           {/* Submit */}
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pt-2">
             <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              By submitting, you confirm this is{" "}
-              <span className="font-semibold">test mode</span>. Your order is
+              Your order is
               created as <span className="font-semibold">pending</span>.
             </p>
             <button
@@ -401,7 +387,7 @@ export default function CryptoPayment() {
               disabled={submitting}
               className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-2 text-xs font-medium text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {submitting ? "Submitting..." : "Submit crypto (test)"}
+              {submitting ? "Submitting..." : "Submit crypto"}
             </button>
           </div>
         </motion.form>

@@ -74,7 +74,7 @@ export default function AdminDashboard() {
           </Link>
           {/* direct shortcuts to creation pages */}
           <Link
-            to="/admin/events/new"
+            to="/admin/events"
             className="px-4 py-2 rounded-full bg-emerald-600 text-white shadow-sm hover:bg-emerald-700"
           >
             Add Event

@@ -1,215 +1,3 @@
-// // src/pages/payments/GiftCardPayment.jsx
-// import { useLocation, useNavigate } from "react-router-dom";
-// import { useMemo, useState } from "react";
-// import { db } from "../../lib/firebase";
-// import {
-//   collection,
-//   addDoc,
-//   serverTimestamp,
-// } from "firebase/firestore";
-// import useAuth from "../../hooks/useAuth";
-// import { motion } from "framer-motion";
-
-// const pageStagger = {
-//   hidden: {},
-//   visible: { transition: { staggerChildren: 0.18 } },
-// };
-
-// const fadeUp = {
-//   hidden: { opacity: 0, y: 18 },
-//   visible: { opacity: 1, y: 0 },
-// };
-
-// export default function GiftCardPayment() {
-//   const location = useLocation();
-//   const navigate = useNavigate();
-//   const { user } = useAuth();
-
-//   const event = location.state?.event || null;
-//   const tickets = location.state?.tickets || [];
-
-//   const [giftCode, setGiftCode] = useState("");
-//   const [note, setNote] = useState("");
-//   const [fileName, setFileName] = useState("");
-//   const [submitting, setSubmitting] = useState(false);
-
-//   const totalPrice = useMemo(
-//     () =>
-//       tickets.reduce((sum, t) => sum + (Number(t.price) || 0), 0),
-//     [tickets]
-//   );
-
-//   if (!event || tickets.length === 0) {
-//     return (
-//       <div className="max-w-3xl mx-auto px-4 py-8">
-//         <p className="text-sm text-slate-700 dark:text-slate-300">
-//           No order found. Go back to checkout.
-//         </p>
-//       </div>
-//     );
-//   }
-
-//   if (!user) {
-//     return (
-//       <div className="max-w-3xl mx-auto px-4 py-8 space-y-4">
-//         <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-//           Gift card payment
-//         </h1>
-//         <p className="text-sm text-slate-700 dark:text-slate-300">
-//           You must be logged in to submit a payment.
-//         </p>
-//         <button
-//           onClick={() =>
-//             navigate("/auth/login", { state: { from: "/checkout" } })
-//           }
-//           className="px-4 py-2 rounded-full bg-emerald-600 text-sm font-medium text-white"
-//         >
-//           Log in
-//         </button>
-//       </div>
-//     );
-//   }
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     if (!giftCode.trim()) {
-//       alert("Please enter a gift card code (test).");
-//       return;
-//     }
-
-//     setSubmitting(true);
-//     try {
-//       await addDoc(collection(db, "orders"), {
-//         userId: user.uid,
-//         eventId: event.id,
-//         tickets: tickets.map((t) => t.id),
-//         total: totalPrice,
-//         status: "pending",
-//         paymentMethod: "gift-card",
-//         giftCardCode: giftCode.trim(),
-//         giftCardNote: note || null,
-//         giftCardImageName: fileName || null,
-//         createdAt: serverTimestamp(),
-//       });
-
-//       navigate("/profile");
-//     } catch (err) {
-//       console.error("Gift card submit error", err);
-//       alert("Something went wrong. Please try again.");
-//       setSubmitting(false);
-//     }
-//   };
-
-//   return (
-//     <motion.div
-//       className="max-w-3xl mx-auto px-4 py-8 space-y-6"
-//       variants={pageStagger}
-//       initial="hidden"
-//       animate="visible"
-//     >
-//       {/* TEST MODE BANNER */}
-//       <motion.div
-//         variants={fadeUp}
-//         className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-100"
-//       >
-//         <p className="font-semibold">
-//           TEST MODE — Upload any image and gift card code. No real funds are
-//           used. An admin will manually review and mark this order as paid.
-//         </p>
-//       </motion.div>
-
-//       <motion.header variants={fadeUp}>
-//         <h1 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">
-//           Pay with gift card
-//         </h1>
-//         <p className="text-xs text-slate-600 mt-1 dark:text-slate-400">
-//           Submit a test gift card for this order.
-//         </p>
-//       </motion.header>
-
-//       <motion.section
-//         variants={fadeUp}
-//         className="bg-white border border-slate-200 rounded-xl p-4 space-y-3 shadow-sm dark:bg-slate-900 dark:border-slate-800"
-//       >
-//         <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-//           Order summary
-//         </h2>
-//         <p className="text-sm text-slate-900 dark:text-slate-100">
-//           {event.artistName} — {event.eventName}
-//         </p>
-//         <p className="text-xs text-slate-600 dark:text-slate-400">
-//           {tickets.length} ticket{tickets.length !== 1 ? "s" : ""} • Total:{" "}
-//           <span className="font-semibold">
-//             ${totalPrice.toFixed(2)}
-//           </span>
-//         </p>
-//       </motion.section>
-
-//       <motion.form
-//         onSubmit={handleSubmit}
-//         variants={fadeUp}
-//         className="bg-white border border-slate-200 rounded-xl p-4 space-y-4 shadow-sm dark:bg-slate-900 dark:border-slate-800"
-//       >
-//         <div className="space-y-1 text-xs">
-//           <label className="text-slate-700 dark:text-slate-300">
-//             Gift card code (test)
-//           </label>
-//           <input
-//             type="text"
-//             value={giftCode}
-//             onChange={(e) => setGiftCode(e.target.value)}
-//             className="w-full rounded border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 dark:bg-slate-950 dark:border-slate-700 dark:text-slate-100"
-//             placeholder="e.g. TEST-1234-5678"
-//           />
-//         </div>
-
-//         <div className="space-y-1 text-xs">
-//           <label className="text-slate-700 dark:text-slate-300">
-//             Upload gift card image (optional)
-//           </label>
-//           <input
-//             type="file"
-//             accept="image/*"
-//             onChange={(e) => {
-//               const file = e.target.files?.[0];
-//               setFileName(file ? file.name : "");
-//             }}
-//             className="block w-full text-xs text-slate-700 dark:text-slate-300"
-//           />
-//           {fileName && (
-//             <p className="text-[11px] text-slate-500 dark:text-slate-400">
-//               Selected: {fileName} (not actually uploaded in test mode)
-//             </p>
-//           )}
-//         </div>
-
-//         <div className="space-y-1 text-xs">
-//           <label className="text-slate-700 dark:text-slate-300">
-//             Note for admin (optional)
-//           </label>
-//           <textarea
-//             value={note}
-//             onChange={(e) => setNote(e.target.value)}
-//             rows={3}
-//             className="w-full rounded border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 dark:bg-slate-950 dark:border-slate-700 dark:text-slate-100"
-//             placeholder="Anything you want to tell the admin about this card..."
-//           />
-//         </div>
-
-//         <div className="flex justify-end">
-//           <button
-//             type="submit"
-//             disabled={submitting}
-//             className="px-5 py-2 rounded-full bg-emerald-600 text-xs font-medium text-white disabled:opacity-50"
-//           >
-//             {submitting ? "Submitting..." : "Submit gift card (test)"}
-//           </button>
-//         </div>
-//       </motion.form>
-//     </motion.div>
-//   );
-// }
-
 
 
 
@@ -353,7 +141,7 @@ export default function GiftCardPayment() {
       return;
     }
     if (!giftCode.trim()) {
-      alert("Please enter a gift card code (test).");
+      alert("Please enter a gift card code.");
       return;
     }
     if (!fileName) {
@@ -395,16 +183,7 @@ export default function GiftCardPayment() {
       initial="hidden"
       animate="visible"
     >
-      {/* TEST MODE BANNER */}
-      <motion.div
-        variants={fadeUp}
-        className="rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs text-amber-900 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-100"
-      >
-        <p className="font-semibold">
-          TEST MODE — Upload any image and gift card code. No real funds are
-          used. An admin will manually review and mark this order as paid.
-        </p>
-      </motion.div>
+
 
       {/* HEADER + BACK */}
       <motion.header
@@ -422,7 +201,7 @@ export default function GiftCardPayment() {
             Pay with gift card
           </h1>
           <p className="text-xs text-slate-600 dark:text-slate-400">
-            Select the gift card brand, enter the test code, and upload a clear
+            Select the gift card brand, enter the code, and upload a clear
             photo of the card.
           </p>
         </div>
@@ -471,11 +250,11 @@ export default function GiftCardPayment() {
           {/* Small "What happens next" card */}
           <div className="bg-white border border-slate-200 rounded-xl p-4 text-xs space-y-2 shadow-sm dark:bg-slate-900 dark:border-slate-800">
             <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-              How this works (test flow)
+              How this works
             </h3>
             <ol className="list-decimal list-inside space-y-1 text-slate-600 dark:text-slate-400">
               <li>Select a gift card brand.</li>
-              <li>Enter a fake gift card code.</li>
+              <li>Enter a gift card code.</li>
               <li>Upload a clear image of the “gift card”.</li>
               <li>
                 Submit your request — your order will be created as{" "}
@@ -544,11 +323,9 @@ export default function GiftCardPayment() {
               value={giftCode}
               onChange={(e) => setGiftCode(e.target.value)}
               className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 shadow-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 dark:bg-slate-950 dark:border-slate-700 dark:text-slate-100"
-              placeholder="e.g. TEST-1234-5678"
+              placeholder=""
             />
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              Use any fake code — this is only for demonstration in test mode.
-            </p>
+            
           </div>
 
           {/* Gift card image upload (REQUIRED) */}
@@ -564,7 +341,7 @@ export default function GiftCardPayment() {
                   Click to upload a photo of the gift card
                 </span>
                 <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                  PNG, JPG up to a few MB (test only)
+                  PNG, JPG up to a few MB
                 </span>
                 <input
                   type="file"
@@ -582,8 +359,7 @@ export default function GiftCardPayment() {
             {fileName && (
               <p className="text-[11px] text-slate-500 dark:text-slate-400">
                 Selected: <span className="font-medium">{fileName}</span> (file
-                name stored for admin review; not actually uploaded in test
-                mode).
+                name stored for admin review).
               </p>
             )}
           </div>
@@ -604,17 +380,12 @@ export default function GiftCardPayment() {
 
           {/* Submit */}
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between pt-2">
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              By submitting, you confirm this is a{" "}
-              <span className="font-semibold">test</span> gift card payment. Your
-              order will not charge any real money.
-            </p>
             <button
               type="submit"
               disabled={submitting}
               className="inline-flex items-center justify-center rounded-full bg-emerald-600 px-5 py-2 text-xs font-medium text-white shadow-sm hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {submitting ? "Submitting..." : "Submit gift card (test)"}
+              {submitting ? "Submitting..." : "Submit gift card"}
             </button>
           </div>
         </motion.form>
