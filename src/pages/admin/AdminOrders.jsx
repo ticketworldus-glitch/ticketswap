@@ -79,6 +79,7 @@ export default function AdminOrders() {
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
+const [fullscreenImage, setFullscreenImage] = useState(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -144,8 +145,41 @@ export default function AdminOrders() {
             Note: {order.giftCardNote || "N/A"}
           </p>
           <p className="text-slate-600 dark:text-slate-300">
-            Uploaded image: {order.giftCardImageName || "None"}
-          </p>
+  Uploaded image:
+</p>
+
+{order.giftCardImageUrl ? (
+  <div className="mt-1 space-y-1">
+    {/* Image preview */}
+<img
+  src={order.giftCardImageUrl}
+  alt="Gift card"
+  onClick={() => setFullscreenImage(order.giftCardImageUrl)}
+  className="w-40 cursor-pointer rounded-md border border-slate-200 dark:border-slate-700 hover:opacity-90"
+/>
+
+
+    {/* Clickable link */}
+    <a
+      href={order.giftCardImageUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block text-[11px] text-emerald-600 hover:underline break-all"
+    >
+      View full image
+    </a>
+
+    {/* Original filename (optional) */}
+    {order.giftCardImageName && (
+      <p className="text-[11px] text-slate-500">
+        File: {order.giftCardImageName}
+      </p>
+    )}
+  </div>
+) : (
+  <p className="text-slate-500 dark:text-slate-400">None</p>
+)}
+
         </div>
       );
     }
@@ -375,6 +409,27 @@ export default function AdminOrders() {
           })}
         </div>
       )}
+      {fullscreenImage && (
+  <div
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+    onClick={() => setFullscreenImage(null)}
+  >
+    <img
+      src={fullscreenImage}
+      alt="Full screen gift card"
+      className="max-h-[90vh] max-w-[90vw] rounded-lg shadow-lg"
+      onClick={(e) => e.stopPropagation()}
+    />
+
+    <button
+      onClick={() => setFullscreenImage(null)}
+      className="absolute top-4 right-4 rounded-full bg-black/60 px-3 py-1 text-xs text-white hover:bg-black"
+    >
+      ✕ Close
+    </button>
+  </div>
+)}
+
     </div>
   );
 }

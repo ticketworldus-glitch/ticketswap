@@ -1,44 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // src/pages/payments/GiftCardPayment.jsx
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
@@ -75,6 +34,46 @@ export default function GiftCardPayment() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+const [giftCardImageUrl, setGiftCardImageUrl] = useState("");
+const [uploadingImage, setUploadingImage] = useState(false);
+
+const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const UPLOAD_PRESET =
+  import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || "TicketGen";
+const handleGiftCardImageUpload = async (e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  setUploadingImage(true);
+  setFileName(file.name);
+
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const data = await res.json();
+
+    if (data.secure_url) {
+      setGiftCardImageUrl(data.secure_url);
+    } else {
+      alert("Image upload failed. Check Cloudinary settings.");
+    }
+  } catch (err) {
+    console.error("Gift card image upload error:", err);
+    alert("Upload failed. Try again.");
+  } finally {
+    setUploadingImage(false);
+  }
+};
 
   const event = location.state?.event || null;
   const tickets = location.state?.tickets || [];
@@ -144,10 +143,11 @@ export default function GiftCardPayment() {
       alert("Please enter a gift card code.");
       return;
     }
-    if (!fileName) {
-      alert("Please upload an image of the gift card (required).");
-      return;
-    }
+if (!giftCardImageUrl) {
+  alert("Please upload an image of the gift card (required).");
+  return;
+}
+
 
     setSubmitting(true);
     try {
@@ -164,6 +164,7 @@ export default function GiftCardPayment() {
 
         giftCardCode: giftCode.trim(),
         giftCardNote: note || null,
+        giftCardImageUrl: giftCardImageUrl,
         giftCardImageName: fileName || null,
         createdAt: serverTimestamp(),
       });
@@ -347,12 +348,14 @@ export default function GiftCardPayment() {
                   type="file"
                   accept="image/*"
                   required
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    setFileName(file ? file.name : "");
-                  }}
+                  disabled={uploadingImage}
+                  onChange={handleGiftCardImageUpload}
                   className="mt-2 block w-full text-[11px] text-slate-600 dark:text-slate-300"
                 />
+                {submitting || uploadingImage
+                ? "Uploading..."
+                : "Submit gift card"}
+
               </label>
             </div>
 

@@ -45,6 +45,7 @@ export default function TicketSelection() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+const [fullscreenImage, setFullscreenImage] = useState(null);
 
   const [event, setEvent] = useState(null);
   const [tickets, setTickets] = useState([]);
@@ -533,8 +534,10 @@ export default function TicketSelection() {
                                   <img
                                     src={t.ticketImageUrl}
                                     alt="Ticket"
-                                    className="w-full h-auto object-contain md:w-[90%]"
+                                    onClick={() => setFullscreenImage(t.ticketImageUrl)}
+                                    className="w-full h-auto object-contain md:w-[90%] cursor-pointer hover:opacity-90"
                                   />
+
                                 </div>
                               </div>
                             </div>
@@ -625,6 +628,28 @@ export default function TicketSelection() {
           )}
         </section>
       )}
+
+      {fullscreenImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+          onClick={() => setFullscreenImage(null)}
+        >
+          <img
+            src={fullscreenImage}
+            alt="Ticket full screen"
+            className="max-h-[90vh] max-w-[90vw] rounded-lg shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          <button
+            onClick={() => setFullscreenImage(null)}
+            className="absolute top-4 right-4 rounded-full bg-black/60 px-3 py-1 text-xs text-white hover:bg-black"
+          >
+            ✕ Close
+          </button>
+        </div>
+      )}
+
     </div>
   );
 }
