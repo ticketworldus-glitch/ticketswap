@@ -101,7 +101,7 @@ export default function Navbar() {
         >
           <Ticket className="w-6 h-6 text-emerald-600 dark:text-emerald-500" />
           <span className="font-semibold text-lg tracking-tight text-slate-900 dark:text-white">
-            Ticket Swap
+            Best Ticks
           </span>
         </button>
 
